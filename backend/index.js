@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 import multer from "multer";
 import dotenv from "dotenv";
-import { connectDB, createTable , insertToDB ,printAgeDistribution} from "./database/db.js";
+import { connectDB, createTable , insertToDB ,getAgeDistribution} from "./database/db.js";
 import parseCSV from "./controllers/converter.js";
 
 dotenv.config();
@@ -31,10 +31,11 @@ app.post("/upload", upload.single("csvFile"), async (req, res) => {
     const jsonData = parseCSV(csvContent);
     // Insert parsed data into the database
     await insertToDB(jsonData);
-    await printAgeDistribution();
+    const ageDistribution = await getAgeDistribution();
     res.json({
       message: "File uploaded and converted successfully.",
       data: jsonData,
+      ageDistribution,
     });
   } catch (error) {
     console.error("Error parsing CSV:", error);

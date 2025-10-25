@@ -67,7 +67,7 @@ export async function insertToDB(dataArray) {
   }
 }
 
-export async function printAgeDistribution() {
+export async function getAgeDistribution() {
   try {
     const result = await pool.query("SELECT age FROM public.users");
     const ages = result.rows.map((row) => row.age);
@@ -93,12 +93,13 @@ export async function printAgeDistribution() {
     const total = ages.length;
     const pct = (count) => ((count / total) * 100).toFixed(2);
 
-    console.log("\n📊 Age Distribution Report:");
-    console.log("Age Group        % Distribution");
-    console.log(`< 20             ${pct(group1)}`);
-    console.log(`20 - 40          ${pct(group2)}`);
-    console.log(`40 - 60          ${pct(group3)}`);
-    console.log(`> 60             ${pct(group4)}\n`);
+    return {
+      "<20": pct(group1),
+      "20-40": pct(group2),
+      "40-60": pct(group3),
+      ">60": pct(group4),
+    };
+    
   } catch (error) {
     console.error("❌ Error calculating age distribution:", error);
   }
